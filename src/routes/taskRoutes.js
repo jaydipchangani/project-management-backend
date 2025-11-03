@@ -14,18 +14,15 @@ const router = express.Router();
 
 router.use(protect);
 
-router
-  .route("/")
+router.route("/")
   .get(getAllTasks)
   .post(authorizeRoles("Admin", "ProjectManager"), createTask);
 
-router
-  .route("/:id")
+router.route("/:id")
   .get(getTaskById)
-  .put(authorizeRoles("Admin", "ProjectManager", "TeamMember"), updateTask)
+  .put(updateTask)
   .delete(authorizeRoles("Admin", "ProjectManager"), deleteTask);
 
-router.route("/assigned/:userId")
-  .get(protect, getTasksByAssignedUser);
+router.route("/assigned/:userId").get(getTasksByAssignedUser);
 
 export default router;

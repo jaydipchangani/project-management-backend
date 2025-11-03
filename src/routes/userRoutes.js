@@ -11,7 +11,7 @@ import { authorizeRoles } from "../middlewares/roleMiddleware.js";
 const router = express.Router();
 
 // Admin-only routes
-router.get("/", protect, authorizeRoles("Admin"), getAllUsers);
+router.get("/", protect, authorizeRoles("Admin","ProjectManager"), getAllUsers);
 router.get("/:id", protect, authorizeRoles("Admin"), getUserById);
 router.put("/:id", protect, authorizeRoles("Admin"), updateUser);
 router.delete("/:id", protect, authorizeRoles("Admin"), deleteUser);
