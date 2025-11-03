@@ -171,3 +171,45 @@ export const deleteTask = async (req, res) => {
     res.status(500).json({ success: false, message: error.message });
   }
 };
+
+// ✅ @desc Get tasks assigned to a specific user
+// @route GET /api/tasks/assigned/:userId
+export const getTasksByAssignedUser = async (req, res) => {
+  try {
+    const { userId } = req.params;
+    const user = req.user;
+    let filter = { assignedTo: userId };
+
+    // Role-based restrictions
+    if (user.role === "Admin") {
+      // Admin can see all tasks assigned to anyone
+    } else if (user.role === "ProjectManager") {
+      // Only tasks in projects the manager created
+      const managerProjects = await Project.find({ createdBy: user._id }).select("_id");
+      const projectIds = managerProjects.map((p) => p._id);
+      filter.project = { $in: projectIds };
+    } else {
+      // Team member can only view their own tasks
+      if (userId !== user._id.toString()) {
+        return res.status(403).json({
+          success: false,
+          message: "Not authorized to view tasks for another user",
+        });
+      }
+    }
+
+    const tasks = await Task.find(filter)
+      .populate("assignedTo", "name email role")
+      .populate("project", "name description status")
+      .sort({ createdAt: -1 });
+
+    res.status(200).json({
+      success: true,
+      count: tasks.length,
+      data: tasks,
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+

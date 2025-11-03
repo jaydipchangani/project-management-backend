@@ -5,6 +5,7 @@ import {
   getTaskById,
   updateTask,
   deleteTask,
+  getTasksByAssignedUser
 } from "../controllers/taskController.js";
 import { protect } from "../middlewares/authMiddleware.js";
 import { authorizeRoles } from "../middlewares/roleMiddleware.js";
@@ -23,5 +24,8 @@ router
   .get(getTaskById)
   .put(authorizeRoles("Admin", "ProjectManager", "TeamMember"), updateTask)
   .delete(authorizeRoles("Admin", "ProjectManager"), deleteTask);
+
+router.route("/assigned/:userId")
+  .get(protect, getTasksByAssignedUser);
 
 export default router;
