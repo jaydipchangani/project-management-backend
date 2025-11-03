@@ -6,12 +6,14 @@ import userRoutes from "./routes/userRoutes.js";
 import projectRoutes from "./routes/projectRoutes.js";
 import taskRoutes from "./routes/taskRoutes.js";
 import dashboardRoutes from "./routes/dashboardRoutes.js";
+import cors from "cors";
 
 dotenv.config();
 connectDB();
 
 const app = express();
 app.use(express.json());
+app.use(cors({ origin: "*", credentials: true }));
 
 // Routes
 app.use("/api/auth", authRoutes);
